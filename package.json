@@ -1,0 +1,16 @@
+{
+  "name": "firebase-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently npm:start:backend npm:start:frontend",
+    "start:backend": "(cd backend && npm start)",
+    "start:frontend": "(cd frontend && npm start)"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.4.0"
+  }
+}

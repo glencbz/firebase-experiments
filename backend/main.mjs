@@ -2,6 +2,8 @@ import express, { Router } from 'express';
 import { default as bodyParser } from 'body-parser';
 import session from 'express-session';
 import cors from 'cors';
+import { firebaseSignIn } from './firebase.mjs';
+
 const { PORT = 1008 } = process.env;
 
 const app = express();
@@ -16,9 +18,10 @@ const oauthRouter = Router();
 
 oauthRouter.post(
   '/login/google',
-  (req, res) => {
+  async (req, res) => {
     console.log('received', req.body);
-    return res.send(req.body);
+    const credential = await firebaseSignIn(req.body);
+    return res.send(credential);
   }
 );
 

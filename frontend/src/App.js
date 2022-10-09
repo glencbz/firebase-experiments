@@ -29,11 +29,27 @@ function useFirebaseAuth(setUser) {
   }
 }
 
+function useGoogleAuth(setUser) {
+  useEffect(() => {
+    window.google.accounts.id.initialize({
+      client_id: "209220158556-frsgjh92d58csoab0piejg693f6jucls.apps.googleusercontent.com",
+      callback: (response) => setUser(response.credential),
+    });
+    window.google.accounts.id.renderButton(
+      // This in the static html
+      document.getElementById("buttonDiv"),
+      { theme: "outline", size: "large" }  // customization attributes
+    );
+    window.google.accounts.id.prompt(); // also display the One Tap dialog
+  }, [])
+}
+
 function App() {
   const [user, setUser] = useState(null);
   const {
     signIn: firebaseSignIn
   } = useFirebaseAuth(setUser);
+  useGoogleAuth(setUser);
 
   return (
     <div className="App">

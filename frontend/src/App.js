@@ -3,6 +3,8 @@ import './App.css';
 import { auth, provider } from './firebase';
 import { getRedirectResult, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 
+const BACKEND_HOST = 'http://localhost:1008';
+
 function useFirebaseAuth(setUser) {
   useEffect(() => {
     getRedirectResult(auth)
@@ -29,11 +31,21 @@ function useFirebaseAuth(setUser) {
   }
 }
 
+const GOOGLE_URL = `${BACKEND_HOST}/login/google`;
 function useGoogleAuth(setUser) {
+  const postResponse = useCallback((authResponse) => {
+    fetch(GOOGLE_URL, {
+      method: 'POST',
+      body: authResponse.credential,
+    })
+      .then(response => response.text())
+      .then(body => { setUser(body) });
+  }, []);
+
   useEffect(() => {
     window.google.accounts.id.initialize({
       client_id: "209220158556-frsgjh92d58csoab0piejg693f6jucls.apps.googleusercontent.com",
-      callback: (response) => setUser(response.credential),
+      callback: postResponse,
     });
     window.google.accounts.id.renderButton(
       // This in the static html

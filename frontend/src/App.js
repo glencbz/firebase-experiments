@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { auth, provider } from './firebase';
 import { getRedirectResult, signInWithRedirect, GoogleAuthProvider } from "firebase/auth";
 
-function App() {
-  const [user, setUser] = useState(null);
-  const getUserDetails = useEffect(() => {
+function useFirebaseAuth(setUser) {
+  useEffect(() => {
     getRedirectResult(auth)
       .then((result) => {
         // This gives you a Google Access Token. You can use it to access Google APIs.
@@ -23,16 +22,24 @@ function App() {
         const email = error.customData.email;
         // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
       });
   }, []);
-  const signIn = () => signInWithRedirect(auth, provider);
+  return {
+    signIn: useCallback(() => signInWithRedirect(auth, provider)),
+  }
+}
+
+function App() {
+  const [user, setUser] = useState(null);
+  const {
+    signIn: firebaseSignIn
+  } = useFirebaseAuth(setUser);
 
   return (
     <div className="App">
       {user ?
         <p>{user}</p>
-        : <button onClick={signIn}>Sign In</button>}
+        : <button onClick={firebaseSignIn}>Sign In</button>}
     </div>
   );
 }
